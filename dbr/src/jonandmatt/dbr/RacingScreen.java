@@ -7,6 +7,10 @@ package jonandmatt.dbr;
 
 import bropals.lib.simplegame.controls.Controller;
 import bropals.lib.simplegame.state.GameState;
+import java.awt.geom.Ellipse2D;
+import bropals.lib.simplegame.math.Vector2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 /**
@@ -108,7 +112,168 @@ public class RacingScreen extends GameState {
         }
     }
     
-    private void handleCollisions() {
-        
+    /**** COLLISION SUB-FUNCTIONS ****/
+    private void CheckAndHandleWallCollision(REntity environmentBubble) {
+        // Do something...
+        // THIS IS FOR WALL COLLISIONS
+        for(REntity wall : voids) {
+            Rectangle2D bounds = wall.collisionShape.getBounds2D();            
+            float radius = environmentBubble.getRadius();
+            if (((environmentBubble.pos.getX() + radius) <= bounds.getMaxX() ) | ((environmentBubble.pos.getX() - radius) >= bounds.getMinX()))
+                environmentBubble.vel.setX(-1 * environmentBubble.vel.getX());
+
+            if (((environmentBubble.pos.getY() + radius) <= bounds.getMaxY() ) | ((environmentBubble.pos.getY() - radius) <= bounds.getMaxY() )) //canv.Height
+                environmentBubble.vel.setY(-1 * environmentBubble.vel.getY());
+        }
+
     }
+    private void CheckAndHandleEnvironmentBubbleCollision(REntity environmentBubble, REntity environmentBubble2) {
+        // Do something...
+        boolean isCollision = false;
+        float distance = environmentBubble.pos.add(environmentBubble2.pos.scale(-1.0)).magnitude();
+        
+        //Ellipse2D.Float temporary = (Ellipse2D.Float)environmentBubble.collisionShape;
+        //Ellipse2D.Float temporary2 = (Ellipse2D.Float)environmentBubble2.collisionShape;
+        float eB1radius = environmentBubble.getRadius(); //temporary.getCenterX() - temporary.getX(); // also true: temporary.getCenterY() - temporary.getY()
+        float eB2radius = environmentBubble.getRadius(); //temporary2.getCenterX() - temporary2.getX(); // also true: temporary.getCenterY() - temporary.getY()
+        float radiiSum = eB1radius + eB2radius;
+        if(distance > radiiSum) {
+            isCollision = false; // the circles are too far apart.
+        } else if( distance <= radiiSum) {
+            isCollision = true;
+        } else if( distance == 0. && eB1radius == eB2radius) {
+            isCollision = true;
+        }
+        else isCollision = true;
+        if(!isCollision) return;
+        
+        
+        resolveEnvToEnvBubbleCollision(environmentBubble, environmentBubble2);
+    }
+    private void CheckAndHandleFallingIntoVoid(PlayerBubble playerBubble) {
+        // Do something...
+        // THIS IS FOR PLAYER FALLING IN THE VOID
+        for(REntity chasm : voids) {
+            Rectangle2D bounds = chasm.collisionShape.getBounds2D();
+            float radius = playerBubble.getRadius();
+            if (((playerBubble.pos.getX() + radius) <= bounds.getMaxX() ) | ((playerBubble.pos.getX() - radius) >= bounds.getMinX())) {
+                playerBubble.burstBubble();
+                System.out.println("Player " + playerBubble.hashCode() + " fell into the void!");
+            }
+
+            if (((playerBubble.pos.getY() + radius) <= bounds.getMaxY() ) | ((playerBubble.pos.getY() - radius) <= bounds.getMaxY() )) {
+                playerBubble.burstBubble();
+                System.out.println("Player " + playerBubble.hashCode() + " fell into the void!");
+            }
+        }
+
+    }
+    private void CheckAndHandlePlayerToPlayerBubbleCollision(PlayerBubble playerBubble, REntity environmentBubble) {
+        // Do something...
+    }
+    private void CheckAndHandlePlayerToEnvironmentBubbleCollision(PlayerBubble playerBubble, REntity environmentBubble) {
+        // Do something...
+    }
+    
+    private void handleCollisions() {
+        // Environment bubbles' wall collisions
+        for(REntity environmentBubble : eBubbles) {
+            CheckAndHandleWallCollision(environmentBubble); // environmentBubble.update(mills);
+        }
+        
+        // Environment bubble to Env. bubble collision
+        for(REntity environmentBubble : eBubbles) {
+            for(REntity environmentBubble2 : eBubbles) {
+                if(environmentBubble != environmentBubble2 
+                        || environmentBubble.equals(environmentBubble2)) {
+                        CheckAndHandleEnvironmentBubbleCollision(environmentBubble, environmentBubble2); // environmentBubble.update(mills);
+                }
+            }
+        }
+          
+        // Player bubbles' fall into void detection
+        for(PlayerBubble playerBubble : pBubbles) {
+            CheckAndHandleFallingIntoVoid(playerBubble); // environmentBubble.update(mills);
+        }
+        
+        // Player bubble to either (Pla. or Env.) bubble collision
+        for(PlayerBubble playerBubble : pBubbles) {
+            for(PlayerBubble playerBubble2 : pBubbles) {
+                if(playerBubble != playerBubble2 
+                        || playerBubble.equals(playerBubble2)) {
+                        CheckAndHandlePlayerToPlayerBubbleCollision(playerBubble, playerBubble2); // environmentBubble.update(mills);
+                }
+            }
+            for(REntity environmentBubble2 : eBubbles) {
+                CheckAndHandlePlayerToEnvironmentBubbleCollision(playerBubble, environmentBubble2); // environmentBubble.update(mills);
+            }
+        }
+    } // END handleCollisions
+    
+    
+    
+    public void resolveEnvToEnvBubbleCollision(REntity _ball1, REntity _ball2)
+    {
+        float collisionision_angle = (float)Math.atan2((_ball2.pos.getY() - _ball1.pos.getY()), (_ball2.pos.getX() - _ball1.pos.getX()));         
+        float speed1 = _ball1.vel.magnitude();
+        float speed2 = _ball2.vel.magnitude();
+
+        float direction_1 = (float)Math.atan2(_ball1.vel.getY(), _ball1.vel.getX());
+        float direction_2 = (float)Math.atan2(_ball2.vel.getY(), _ball2.vel.getX());
+        float new_xspeed_1 = (float)(speed1 * Math.cos(direction_1 - collisionision_angle));
+        float new_yspeed_1 = (float)(speed1 * Math.sin(direction_1 - collisionision_angle));
+        float new_xspeed_2 = (float)(speed2 * Math.cos(direction_2 - collisionision_angle));
+        float new_yspeed_2 = (float)(speed2 * Math.sin(direction_2 - collisionision_angle));
+
+        float final_xspeed_1 = ((_ball1.mass - _ball2.mass) * new_xspeed_1 + (_ball2.mass + _ball2.mass) * new_xspeed_2) / (_ball1.mass + _ball2.mass);
+        float final_xspeed_2 = ((_ball1.mass + _ball1.mass) * new_xspeed_1 + (_ball2.mass - _ball1.mass) * new_xspeed_2) / (_ball1.mass + _ball2.mass);
+        float final_yspeed_1 = new_yspeed_1;
+        float final_yspeed_2 = new_yspeed_2;
+
+        float cosAngle = (float)Math.cos(collisionision_angle);
+        float sinAngle = (float)Math.sin(collisionision_angle);
+        _ball1.vel.setX(cosAngle * final_xspeed_1 - sinAngle * final_yspeed_1);
+        _ball1.vel.setY(sinAngle * final_xspeed_1 + cosAngle * final_yspeed_1);
+        _ball1.vel.setX(cosAngle * final_xspeed_2 - sinAngle * final_yspeed_2);
+        _ball1.vel.setY(sinAngle * final_xspeed_2 + cosAngle * final_yspeed_2);
+
+        Vector2D pos1 = new Vector2D(_ball1.pos.getX(), _ball1.pos.getY());
+        Vector2D pos2 = new Vector2D(_ball2.pos.getX(), _ball2.pos.getY());
+
+        // get the mtd
+        Vector2D posDiff = pos1.add(pos2.scale(-1.0));
+//      Vector2D posDiff = minus(pos1, pos2); // pos1 - pos2;
+//      float d = posDiff.Length();
+        float d = posDiff.magnitude();
+
+        // minimum translation distance to push balls apart after intersecting
+        Vector2D mtd =  posDiff.scale( ((_ball1.getRadius() + _ball2.getRadius() ) - d) / d );
+//        Vector2D mtd =  multiply(posDiff,  (((_ball1.r + _ball2.r) - d) / d) );
+        
+        // resolve intersection --
+        // computing inverse mass quantities
+        float im1 = 1 / _ball1.mass;
+        float im2 = 1 / _ball2.mass;
+        float factor = (im1 / (im1 + im2));
+        // push-pull them apart based off their mass
+        pos1.addLocal(mtd.scale(factor));
+        pos2.addLocal(mtd.scale(-factor));
+        //pos1 =  plus(pos1, multiply( mtd, (im1 / (im1 + im2)) )); // pos1 + mtd * (im1 / (im1 + im2));
+        //pos2 =  minus(pos2, multiply( mtd, (im1 / (im1 + im2)) )); // pos2 - mtd * (im2 / (im1 + im2));
+        _ball1.pos = pos1;
+        _ball2.pos = pos2;
+// THIS IS FOR WALL COLLISIONS
+//        if (((_ball1.p.X + _ball1.r) >= getWidth()) | ((_ball1.p.X - _ball1.r) <= 0))
+//           _ball1.v.X = -1 * _ball1.v.X;
+//
+//        if (((_ball1.p.Y + _ball1.r) >= getHeight()) | ((_ball1.p.Y - _ball1.r) <= 0)) //canv.Height
+//           _ball1.v.Y = -1 * _ball1.v.Y;
+//
+//        if (((_ball2.p.X + _ball2.r) >= getWidth()) | ((_ball2.p.X - _ball2.r) <= 0)) // canv.Width
+//            _ball2.v.X = -1 * _ball2.v.X;
+//
+//         if (((_ball2.p.Y + _ball2.r) >= getHeight()) | ((_ball2.p.Y - _ball2.r) <= 0))
+//            _ball2.v.Y = -1 * _ball2.v.Y;
+   }
+    /**** END COLLISION SUB-FUNCTIONS ****/
 }

@@ -12,24 +12,24 @@ package jonandmatt.dbr;
 public enum Surface {
     GRASS, VOID, TRACK, BLOOD;
     
-    private static double accelerationDueToGravity = 9.81; // m/s^2
-    private static double getMuValue(Surface surface) {
+    private static float accelerationDueToGravity = 9.81F; // m/s^2
+    private static float getMuValue(Surface surface) {
         switch(surface) {
             case GRASS:
-                    return 0.5;
+                    return 0.5F;
             case VOID:
-                return 100;
+                return 100F;
             case TRACK:
-                return 0.1;
+                return 0.1F;
             case BLOOD:
-                return 0.0;
+                return 0.0F;
             default:
                 break;
         }
         return 100;
     }
     
-    public static double getFrictionForce(Surface surface, double mass) {
+    public static float getFrictionForce(Surface surface, float mass) {
         return getMuValue(surface) * mass * accelerationDueToGravity;
     }
 }

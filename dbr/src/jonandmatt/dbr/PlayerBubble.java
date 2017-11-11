@@ -13,9 +13,9 @@ import jonandmatt.dbr.REntity;
  */
 public class PlayerBubble extends REntity {
     
-    protected double deltaDirection = 0.0;
-    protected double userForce = 0.0;
-    protected static double doubleMaxVelocityMagnitude = 10.0;
+    protected float deltaDirection = 0.0F;
+    protected float userForce = 0.0F;
+    protected static float floatMaxVelocityMagnitude = 10.0F;
     
     
     
@@ -29,29 +29,29 @@ public class PlayerBubble extends REntity {
        
         
         // USE THIS FOR PLAYERBUBBLES
-        double frictionForce = Surface.getFrictionForce(mySurface, this.mass);
-        //double userForce = 1.0; // Player.getForce();.....
+        float frictionForce = Surface.getFrictionForce(mySurface, this.mass);
+        //float userForce = 1.0; // Player.getForce();.....
         //direction += -1.0; // Player.getDeltaDirection
-        double netForce = userForce - frictionForce;
-        double acceleration = netForce / this.mass;
+        float netForce = userForce - frictionForce;
+        float acceleration = netForce / this.mass;
         
         Vector2D vectorAcceleration = new Vector2D(acceleration * Math.cos(direction), acceleration * Math.sin(direction));
         Vector2D deltaVelocityFromAcceleration = vectorAcceleration.scale(mills); //)new Vector2D(vectorAcceleration.getX() * mills, vectorAcceleration.getY() * mills);
         Vector2D newVelocity = this.vel.add(deltaVelocityFromAcceleration);
-        if(newVelocity.magnitude() > doubleMaxVelocityMagnitude) {
-            newVelocity.scaleLocal(doubleMaxVelocityMagnitude/newVelocity.magnitude());
+        if(newVelocity.magnitude() > floatMaxVelocityMagnitude) {
+            newVelocity.scaleLocal(floatMaxVelocityMagnitude/newVelocity.magnitude());
         }
         //Vector2D deltaPositionFromAcceleration = vectorAcceleration.scale(0.5 * mills * mills);
         Vector2D deltaPositionFromNewVelocity = newVelocity.scale(0.5 * mills);
         // everything is all set to change the position and the velocity
-         Vector2D deltaPositionFromOldVelocity = vel.scale((double)mills);
+         Vector2D deltaPositionFromOldVelocity = vel.scale((float)mills);
         pos.addLocal(deltaPositionFromOldVelocity);
         pos.addLocal(deltaPositionFromNewVelocity);
         
         vel = newVelocity; //vel.addLocal(deltaVelocityFromAcceleration);
     }
     
-    protected boolean keysPressed[] = new boolean[3];
+    //protected boolean keysPressed[] = new boolean[3];
     protected void handleKeyEvent(int keycode) {
         switch(keycode) {
             case bropals.lib.simplegame.KeyCode.KEY_LEFT:
@@ -66,5 +66,16 @@ public class PlayerBubble extends REntity {
             default:
              // this.state.key(bropals.lib.simplegame.KeyCode.KEY_LEFT, keysPressed[0]);   
         }
+    }
+    
+    @Override
+    protected void handleSoundEvent(String key) {
+        this.state.playSoundEffect(key);
+
+    }
+    
+    public void burstBubble() {
+        super.burstBubble();
+        this.handleSoundEvent("String key");
     }
 }
