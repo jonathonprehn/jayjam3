@@ -25,6 +25,7 @@ public class REntity extends BaseEntity {
         super(null);
     }
 
+    protected boolean removeMeDead = false;
     protected RacingScreen state;
     protected Vector2D pos;
     protected Vector2D vel;
@@ -35,8 +36,7 @@ public class REntity extends BaseEntity {
     
     @Override
     public void update(int mills) {
-        Surface mySurface = state.getSurface(this);
-        
+        if(removeMeDead) return;
         //update my position based on my velocity, and my friction
         Vector2D deltaPositionFromVelocityAndTime = vel.scale((double)mills);
         pos.add(deltaPositionFromVelocityAndTime);
@@ -76,11 +76,22 @@ public class REntity extends BaseEntity {
 //    void updateCollisionChecking() {
 //        
 //    }
-    
+
+    public void burstBubble() {
+        if(this.type.equals(Type.PLAYER_BUBBLE) || this.type.equals(Type.WALL_BUBBLE)) {
+            removeMeDead = true;
+            this.vel.setValues(0.0, 0.0);
+            this.type = Type.BLOOD;
+        }
+        else {
+            System.out.print("There was an attempt to delete a non-bubble REntity!! Error!");
+        }
+    }
     
     @Override
     public void render(Object graphicsObj) {
-        //I am being silly and putting all render code in the RacingScreen class
+        
+
     }
     
     void giveState(RacingScreen state) {

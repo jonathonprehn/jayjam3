@@ -7,6 +7,7 @@ package jonandmatt.dbr;
 
 import bropals.lib.simplegame.GameWindow;
 import bropals.lib.simplegame.KeyCode;
+import bropals.lib.simplegame.controls.Controller;
 import bropals.lib.simplegame.state.GameState;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -23,7 +24,7 @@ public class RacingScreen extends GameState {
     ArrayList<REntity> voids = new ArrayList<>();
     ArrayList<REntity> blood = new ArrayList<>();
     ArrayList<REntity> eBubbles = new ArrayList<>();
-    ArrayList<REntity> pBubbles = new ArrayList<>();
+    ArrayList<PlayerBubble> pBubbles = new ArrayList<>();
     
     protected float cameraX;
     protected float cameraY;
@@ -37,7 +38,7 @@ public class RacingScreen extends GameState {
         
         
         //UPDATE ALL PLAYER BUBBLES HERE
-        for (Iterator<REntity> itr = pBubbles.iterator(); itr.hasNext(); ) {
+        for (Iterator<PlayerBubble> itr = pBubbles.iterator(); itr.hasNext(); ) {
             itr.next().update(mills);
         }
         
@@ -102,7 +103,7 @@ public class RacingScreen extends GameState {
             }
         }
         g2d.setColor(Color.BLUE);
-        for (Iterator<REntity> itr = pBubbles.iterator(); itr.hasNext(); ) {
+        for (Iterator<PlayerBubble> itr = pBubbles.iterator(); itr.hasNext(); ) {
             REntity re = itr.next();
             if (shouldDrawPart(re)) {
                 g2d.fillOval((int)(re.asCircle().getX()-cameraX),
@@ -146,6 +147,32 @@ public class RacingScreen extends GameState {
         return cameraX;
     }
 
+    @Override
+    public void mouse(int mousebutton, int x, int y, boolean pressed) {
+        super.mouse(mousebutton, x, y, pressed); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void key(int keycode, boolean pressed) {
+        //super.key(keycode, pressed); //To change body of generated methods, choose Tools | Templates.
+        if(pressed) {
+            pBubbles.iterator().next().handleKeyEvent(keycode);
+            // currentPlayer.handleKeyEvent(params);
+        }
+        else {
+            // currentPlayer.handleKeyEvent(params);
+        }
+    }
+
+    @Override
+    public void addController(Controller controller) {
+        super.addController(controller); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void playSoundEffect(String key) {
+        super.playSoundEffect(key); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public void loadTrack(String trackName) {
         getAssetManager().loadAsset(trackName, trackName, Track.class);
