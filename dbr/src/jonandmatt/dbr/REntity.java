@@ -7,9 +7,12 @@ package jonandmatt.dbr;
 
 import bropals.lib.simplegame.entity.BaseEntity;
 import bropals.lib.simplegame.entity.GameWorld;
-import java.awt.Shape;
+
 import bropals.lib.simplegame.math.Vector2D;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 
 /**
  *
@@ -17,8 +20,8 @@ import java.awt.Graphics2D;
  */
 public class REntity extends BaseEntity {
 
-    public REntity(GameWorld par) {
-        super(par);
+    public REntity() {
+        super(null);
     }
 
     protected RacingScreen state;
@@ -26,9 +29,8 @@ public class REntity extends BaseEntity {
     protected Vector2D vel;
     protected double mass;
     protected double direction; // measured in radians
-    protected java.awt.Shape shape;
-    //private Shape shape;
     protected Type type;
+    protected Shape collisionShape;
     
     @Override
     public void update(int mills) {
@@ -72,5 +74,59 @@ public class REntity extends BaseEntity {
     
     void giveState(RacingScreen state) {
         this.state = state;
+    }
+    
+    public Vector2D getPosition() {
+        return pos;
+    }
+    
+    public Vector2D getVelocity() {
+        return vel;
+    }
+    
+    public Type getType() {
+        return type;
+    }
+    
+    //FOR OBJECT CREATION CODE
+    public void setType(Type t) {
+        this.type = t;
+    }
+    
+    /**
+     * 
+     * @param x x world position
+     * @param y y world position
+     * @param w width
+     * @param h height
+     */
+    public void setToRectangle(float x, float y, float w, float h) {
+        //sets the shape to a rectangle and sets its position and
+        //size to the specified values
+        //FOR CREATION CODE
+        
+        collisionShape = new Rectangle.Float(x, y, w, h);
+    }
+    
+    /**
+     * 
+     * @param x x world position
+     * @param y y world position
+     * @param r radius of the circle
+     */
+    public void setToCircle(float x, float y, float r) {
+        //sets the shape to a rectangle and sets its position and
+        //size to the specified values
+        //FOR CREATION CODE
+        
+        collisionShape = new Ellipse2D.Float(x, y, r, r);
+    }
+    
+    public boolean isRectangle() {
+        return collisionShape instanceof Rectangle.Float;
+    }
+    
+    public boolean isCircle() {
+        return collisionShape instanceof Ellipse2D.Float;
     }
 }

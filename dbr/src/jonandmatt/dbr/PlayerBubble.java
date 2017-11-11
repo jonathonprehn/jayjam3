@@ -13,10 +13,6 @@ import jonandmatt.dbr.REntity;
  */
 public class PlayerBubble extends REntity {
     
-    public PlayerBubble(GameWorld par) {
-        super(null);
-    }
-    
     @Override
     public void update(int mills) {
         Surface mySurface = state.getSurface(this);

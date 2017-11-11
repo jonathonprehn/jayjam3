@@ -10,6 +10,7 @@ import bropals.lib.simplegame.GameStateRunner;
 import bropals.lib.simplegame.GameWindow;
 import bropals.lib.simplegame.io.AssetManager;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,7 +23,8 @@ public class Dbr {
      */
     public static void main(String[] args) {
         GameWindow win = new AWTGameWindow("DEATH BUBBLE RACING", 1024, 720, false);
-        AssetManager assets = new AssetManager(new File("assets"), true);
+        AssetManager assets = new AssetManager(new File("assets"), true);        
+        assets.addAssetLoader(new TrackLoader(), Track.class);
         GameStateRunner runner = new GameStateRunner(win, assets, new RacingScreen());
         //start!
         runner.loop();
