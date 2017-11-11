@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  *
  * @author Jonathon
  */
-public class TrackLoader extends AssetLoader<ArrayList<REntity>> {
+public class TrackLoader extends AssetLoader<Track> {
 
     /*
     
@@ -32,8 +32,8 @@ public class TrackLoader extends AssetLoader<ArrayList<REntity>> {
     
     @Override
     public void loadAsset(String asset, InputStream fs) {
-        ArrayList<REntity> tracks = this.getAsset(asset);
-        if (tracks == null) {
+        Track tr = this.getAsset(asset);
+        if (tr == null) {
             //load it and then buffer it
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(fs));
@@ -50,10 +50,11 @@ public class TrackLoader extends AssetLoader<ArrayList<REntity>> {
                         trackPiece.setToRectangle(x, y, w, h);
                         if (spl[0].equals("TRACK")) {
                             trackPiece.setType(Type.TRACK);
+                            tr.tracks.add(trackPiece);
                         } else if (spl[1].equals("VOID")) {
                             trackPiece.setType(Type.VOID);
+                            tr.voids.add(trackPiece);
                         }
-                        tracks.add(trackPiece);
                     } catch(Exception e) {
                         System.out.println("Line " + linenum + " of " + asset + " gave an error");
                     }
@@ -61,7 +62,7 @@ public class TrackLoader extends AssetLoader<ArrayList<REntity>> {
                 }
                 
                 //after loading the file (correctly)
-                add(asset, tracks);
+                add(asset, tr);
             } catch (IOException ioe) {
                 System.err.println("Cant load track: " + ioe);
             }

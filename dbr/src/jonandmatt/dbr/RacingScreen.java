@@ -23,8 +23,23 @@ public class RacingScreen extends GameState {
     
     @Override
     public void update(int mills) {
+        //UPDATE ALL ENVIRONMENT BUBBLES HERE
+        
+        
+        
+        //UPDATE ALL PLAYER BUBBLES HERE
+        
+        
+        
+        //UPDATE THIS PLAYER'S SPECIFIED PROPERTIES
+        
+        
+        
+        //LETS DO SOME COLLISION CHECKING NOW
+        handleCollisions();
         
          
+        //LETS UPDATE THE CAMERA NOW
     }
 
     @Override
@@ -48,6 +63,19 @@ public class RacingScreen extends GameState {
     }
     
     public void loadTrack(String trackName) {
+        getAssetManager().loadAsset(trackName, trackName, Track.class);
+        Track loadedTrack = getAssetManager().getAsset(trackName, Track.class);
+        if (loadedTrack != null) {
+            tracks.clear();
+            voids.clear();
+            tracks = loadedTrack.tracks;
+            voids = loadedTrack.voids;
+        } else {
+            System.err.println("Cant load track in RacingScreen: " + trackName);
+        }
+    }
+    
+    private void handleCollisions() {
         
     }
 }

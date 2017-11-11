@@ -5,10 +5,13 @@
  */
 package jonandmatt.dbr;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Jonathon
  */
-public enum Shape {
-    RECTANGLE, CIRCLE;
+public class Track {
+    public ArrayList<REntity> tracks = new ArrayList<>();;
+    public ArrayList<REntity> voids = new ArrayList<>();
 }
