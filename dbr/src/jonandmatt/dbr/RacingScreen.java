@@ -6,6 +6,7 @@
 package jonandmatt.dbr;
 
 import bropals.lib.simplegame.state.GameState;
+import java.util.ArrayList;
 
 /**
  *
@@ -13,6 +14,12 @@ import bropals.lib.simplegame.state.GameState;
  */
 public class RacingScreen extends GameState {
 
+    ArrayList<REntity> tracks = new ArrayList<>();
+    ArrayList<REntity> voids = new ArrayList<>();
+    ArrayList<REntity> blood = new ArrayList<>();
+    ArrayList<REntity> bubbles = new ArrayList<>();
+    
+    
     @Override
     public void update(int mills) {
     }
@@ -29,4 +36,9 @@ public class RacingScreen extends GameState {
     public void onExit() {
     }
     
+    Surface getSurface(REntity entity) {
+        
+        
+        return Surface.GRASS;
+    }
 }
