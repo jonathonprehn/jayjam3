@@ -5,6 +5,7 @@
  */
 package jonandmatt.dbr;
 
+import bropals.lib.simplegame.controls.Controller;
 import bropals.lib.simplegame.state.GameState;
 import java.util.ArrayList;
 
@@ -18,17 +19,21 @@ public class RacingScreen extends GameState {
     ArrayList<REntity> voids = new ArrayList<>();
     ArrayList<REntity> blood = new ArrayList<>();
     ArrayList<REntity> eBubbles = new ArrayList<>();
-    ArrayList<REntity> pBubbles = new ArrayList<>();
+    ArrayList<PlayerBubble> pBubbles = new ArrayList<>();
     
     
     @Override
     public void update(int mills) {
         //UPDATE ALL ENVIRONMENT BUBBLES HERE
-        
+        for(REntity environmentBubble : eBubbles) {
+            environmentBubble.update(mills);
+        }
         
         
         //UPDATE ALL PLAYER BUBBLES HERE
-        
+        for(PlayerBubble playerBubble : pBubbles) {
+            playerBubble.update(mills);
+        }
         
         
         //UPDATE THIS PLAYER'S SPECIFIED PROPERTIES
@@ -44,6 +49,7 @@ public class RacingScreen extends GameState {
 
     @Override
     public void render(Object graphicsObj) {
+        
     }
 
     @Override
@@ -60,6 +66,33 @@ public class RacingScreen extends GameState {
         
         
         return Surface.GRASS;
+    }
+
+    @Override
+    public void mouse(int mousebutton, int x, int y, boolean pressed) {
+        super.mouse(mousebutton, x, y, pressed); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void key(int keycode, boolean pressed) {
+        //super.key(keycode, pressed); //To change body of generated methods, choose Tools | Templates.
+        if(pressed) {
+            pBubbles.iterator().next().handleKeyEvent(keycode);
+            // currentPlayer.handleKeyEvent(params);
+        }
+        else {
+            // currentPlayer.handleKeyEvent(params);
+        }
+    }
+
+    @Override
+    public void addController(Controller controller) {
+        super.addController(controller); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void playSoundEffect(String key) {
+        super.playSoundEffect(key); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void loadTrack(String trackName) {
