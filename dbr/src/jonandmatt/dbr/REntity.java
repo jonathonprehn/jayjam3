@@ -24,21 +24,43 @@ public class REntity extends BaseEntity {
     public REntity() {
         super(null);
     }
-
+    
+    public REntity(
+            float posX, float posY, 
+            float velX, float velY, 
+            float m, float dir, 
+            Type ty, Shape colShape) {
+        super(null);
+        pos = new Vector2D(posX, posY);
+        vel = new Vector2D(velX, velY);
+        mass = m;
+        direction = dir;
+        type = ty;
+        if(type.equals(Type.PLAYER_BUBBLE)) {
+            //collisionShape = new Ellipse2D.Float(colShape);
+            collisionShape = (Ellipse2D.Float)(colShape);
+        }
+        else if(type.equals(Type.WALL_BUBBLE)) {
+            //collisionShape = new Ellipse2D.Float(colShape);
+            collisionShape = (Ellipse2D.Float)(colShape);
+        }
+    }
+    
+    
     protected boolean removeMeDead = false;
     protected RacingScreen state;
     protected Vector2D pos;
     protected Vector2D vel;
-    protected double mass;
-    protected double direction; // measured in radians
+    protected float mass;
+    protected float direction; // measured in radians
     protected Type type;
     protected Shape collisionShape;
     
     @Override
     public void update(int mills) {
         if(removeMeDead) return;
-        //update my position based on my velocity, and my friction
-        Vector2D deltaPositionFromVelocityAndTime = vel.scale((double)mills);
+        //update my position based on my velocity
+        Vector2D deltaPositionFromVelocityAndTime = vel.scale((float)mills);
         pos.add(deltaPositionFromVelocityAndTime);
         /* USE THIS FOR PLAYERBUBBLES
         double frictionForce = Surface.getFrictionForce(mySurface, this.mass);
@@ -61,7 +83,7 @@ public class REntity extends BaseEntity {
             Rectangle.Float thisShape = asRectangle();
             thisShape.setFrame(pos.getX(), pos.getY(), thisShape.getWidth(), thisShape.getHeight());
         }
-    }
+    
     
     // THESE NEED TO BE IN SCOPE OF BOTH THE SET OF ALL BUBBLES AND
     // AND THE SET OF SURFACES/-- A HIGH SCOPE!
@@ -77,6 +99,8 @@ public class REntity extends BaseEntity {
 //        
 //    }
 
+    }
+    
     public void burstBubble() {
         if(this.type.equals(Type.PLAYER_BUBBLE) || this.type.equals(Type.WALL_BUBBLE)) {
             removeMeDead = true;
@@ -86,6 +110,11 @@ public class REntity extends BaseEntity {
         else {
             System.out.print("There was an attempt to delete a non-bubble REntity!! Error!");
         }
+        handleSoundEvent("String key");
+    }
+    
+    protected void handleSoundEvent(String key) {
+        this.state.playSoundEffect(key);
     }
     
     @Override
@@ -164,7 +193,7 @@ public class REntity extends BaseEntity {
         return mass;
     }
 
-    public void setMass(double mass) {
+    public void setMass(float mass) {
         this.mass = mass;
     }
 
@@ -172,7 +201,7 @@ public class REntity extends BaseEntity {
         return direction;
     }
 
-    public void setDirection(double direction) {
+    public void setDirection(float direction) {
         this.direction = direction;
     }
 
@@ -190,5 +219,9 @@ public class REntity extends BaseEntity {
     
     public Rectangle.Float asRectangle() {
         return (Rectangle.Float)collisionShape;
+    }
+
+    public float getRadius() {
+        return (float)(((Ellipse2D.Float)collisionShape).getCenterX() - ((Ellipse2D.Float)collisionShape).getX());
     }
 }
