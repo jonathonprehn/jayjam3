@@ -5,10 +5,11 @@
  */
 package jonandmatt.dbr;
 
+import bropals.lib.simplegame.GameWindow;
 import bropals.lib.simplegame.entity.BaseEntity;
-import bropals.lib.simplegame.entity.GameWorld;
 
 import bropals.lib.simplegame.math.Vector2D;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -49,7 +50,17 @@ public class REntity extends BaseEntity {
         Vector2D deltaPositionFromAcceleration = vectorAcceleration.scale(0.5 * mills * mills);
          pos.add(deltaPositionFromAcceleration);
          */
+        
         //oh, am I colliding with something?
+    
+        //synchronize position with the shape position
+        if (isCircle()) {
+            Ellipse2D.Float thisShape = asCircle();
+            thisShape.setFrame(pos.getX(), pos.getY(), thisShape.getWidth(), thisShape.getHeight());
+        } else if (isRectangle()) {
+            Rectangle.Float thisShape = asRectangle();
+            thisShape.setFrame(pos.getX(), pos.getY(), thisShape.getWidth(), thisShape.getHeight());
+        }
     }
     
     // THESE NEED TO BE IN SCOPE OF BOTH THE SET OF ALL BUBBLES AND
@@ -65,11 +76,11 @@ public class REntity extends BaseEntity {
 //    void updateCollisionChecking() {
 //        
 //    }
+    
+    
     @Override
     public void render(Object graphicsObj) {
-        Graphics2D g2d = (Graphics2D)graphicsObj;
-        
-        
+        //I am being silly and putting all render code in the RacingScreen class
     }
     
     void giveState(RacingScreen state) {
@@ -128,5 +139,45 @@ public class REntity extends BaseEntity {
     
     public boolean isCircle() {
         return collisionShape instanceof Ellipse2D.Float;
+    }
+
+    public RacingScreen getState() {
+        return state;
+    }
+
+    public void setState(RacingScreen state) {
+        this.state = state;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
+    }
+
+    public double getDirection() {
+        return direction;
+    }
+
+    public void setDirection(double direction) {
+        this.direction = direction;
+    }
+
+    public Shape getCollisionShape() {
+        return collisionShape;
+    }
+
+    public void setCollisionShape(Shape collisionShape) {
+        this.collisionShape = collisionShape;
+    }
+    
+    public Ellipse2D.Float asCircle() {
+        return (Ellipse2D.Float)collisionShape;
+    }
+    
+    public Rectangle.Float asRectangle() {
+        return (Rectangle.Float)collisionShape;
     }
 }
