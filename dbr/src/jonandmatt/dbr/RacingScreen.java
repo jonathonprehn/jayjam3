@@ -17,11 +17,14 @@ public class RacingScreen extends GameState {
     ArrayList<REntity> tracks = new ArrayList<>();
     ArrayList<REntity> voids = new ArrayList<>();
     ArrayList<REntity> blood = new ArrayList<>();
-    ArrayList<REntity> bubbles = new ArrayList<>();
+    ArrayList<REntity> eBubbles = new ArrayList<>();
+    ArrayList<REntity> pBubbles = new ArrayList<>();
     
     
     @Override
     public void update(int mills) {
+        
+         
     }
 
     @Override
@@ -30,15 +33,21 @@ public class RacingScreen extends GameState {
 
     @Override
     public void onEnter() {
+        
     }
 
     @Override
     public void onExit() {
     }
     
-    Surface getSurface(REntity entity) {
+    
+    public Surface getSurface(REntity entity) {
         
         
         return Surface.GRASS;
+    }
+    
+    public void loadTrack(String trackName) {
+        
     }
 }

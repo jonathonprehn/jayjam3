@@ -16,8 +16,8 @@ import java.awt.Graphics2D;
  */
 public class REntity extends BaseEntity {
 
-    public REntity(GameWorld par) {
-        super(par);
+    public REntity() {
+        super(null);
     }
 
     private RacingScreen state;
@@ -45,5 +45,30 @@ public class REntity extends BaseEntity {
     
     void giveState(RacingScreen state) {
         this.state = state;
+    }
+    
+    public Vector2D getPosition() {
+        return pos;
+    }
+    
+    public Vector2D getVelocity() {
+        return vel;
+    }
+    
+    public Type getType() {
+        return type;
+    }
+    
+    //FOR OBJECT CREATION CODE
+    public void setType(Type t) {
+        this.type = t;
+    }
+    
+    public void setToRectangle(float x, float y, float w, float h) {
+        //sets the shape to a rectangle and sets its position and
+        //size to the specified values
+        //FOR TRACK CREATION CODE
+        
+        //TODO
     }
 }
